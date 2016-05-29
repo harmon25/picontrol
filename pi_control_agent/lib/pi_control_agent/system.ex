@@ -8,7 +8,7 @@ defmodule PiCtrlAgnt.System do
      :disksup.get_disk_data
   end
 
-  def mem() do
+  def ram() do
      :memsup.get_system_memory_data
   end
 
