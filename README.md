@@ -11,4 +11,4 @@ A modern distributed Phoenix/Elixir successor to [raspcontrol](https://github.co
 - Phoenix Authenticated channels also used to run a controlled group of commands on the connected Agents
 
 ## Architecture
-![PiControl](https://github.com/harmon25/picontrol/PiControl.png)
+![PiControl](https://raw.githubusercontent.com/harmon25/picontrol/master/PiControl.png)
