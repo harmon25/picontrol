@@ -38,6 +38,6 @@ config :pi_control_manager, PiCntrlMngr.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "phoenix_react_boiler_dev",
-  hostname: "Doug-PC",
+  database: "pi_control_dev",
+  hostname: "localhost",
   pool_size: 10

@@ -1,15 +1,19 @@
 defmodule PiCtrlAgnt.System do
+  @node_name Node.self()
 
   def cpu() do
-     {:cpu_sup.avg1, :cpu_sup.avg5, :cpu_sup.avg15}
+    %{@node_name => {:cpu_sup.avg1, :cpu_sup.avg5, :cpu_sup.avg15}}
   end
 
   def disks() do
-     :disksup.get_disk_data
+    %{@node_name => :disksup.get_disk_data}
   end
 
   def ram() do
-     :memsup.get_system_memory_data
+    %{@node_name => :memsup.get_system_memory_data}
   end
 
+  def net() do
+    %{@node_name => :inet.getifaddrs()}
+  end
 end

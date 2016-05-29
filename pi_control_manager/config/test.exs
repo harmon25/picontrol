@@ -14,6 +14,6 @@ config :pi_control_manager, PiCntrlMngr.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "phoenix_react_boiler_test",
-  hostname: "Doug-PC",
+  database: "pi_control_test",
+  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

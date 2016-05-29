@@ -7,7 +7,8 @@ use Mix.Config
 
 # General application configuration
 config :pi_control_manager,
-  ecto_repos: [PiCntrlMngr.Repo]
+  ecto_repos: [PiCntrlMngr.Repo],
+  agents: [:"agent1@DietPi"] # an array of nodes we want to connect to.
 
 # Configures the endpoint
 config :pi_control_manager, PiCntrlMngr.Endpoint,
