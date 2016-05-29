@@ -25,7 +25,7 @@ A modern distributed Phoenix/Elixir successor to [raspcontrol](https://github.co
 - connect to a remote node, longname can also be IP address instead of hostname
 - use erlang `:rpc.call/4` to run function on remote BEAM node
 
-```
+```elixir
  Node.connect(:"agent1@APi1")
  :rpc.call(:"agent1@APi1", PiCtrlAgnt.System, :cpu, [])
  :rpc.call(:"agent1@APi1", PiCtrlAgnt.System, :disks, [])
