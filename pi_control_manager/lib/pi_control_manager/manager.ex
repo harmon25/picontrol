@@ -1,4 +1,5 @@
 defmodule PiCntrlMngr.Manager do
+  # grab agents list from application config
   @agents Application.get_env(:pi_control_manager, :agents)
 
   @doc ~S"""
@@ -21,7 +22,7 @@ defmodule PiCntrlMngr.Manager do
 
 
   @doc ~S"""
-    Run RPC call on all agents to gather stats.
+    Run RPC multicall on list of configured agents.
     Returns a keyword list with the node name as the key,
     and result of RPC call on that node as the value
     Currently can only run funtions in the PiCtrlAgnt.System Module

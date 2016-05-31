@@ -15,5 +15,5 @@ config :pi_control_manager, PiCntrlMngr.Repo,
   username: "postgres",
   password: "postgres",
   database: "pi_control_test",
-  hostname: "localhost",
+  hostname: "172.17.0.2",
   pool: Ecto.Adapters.SQL.Sandbox

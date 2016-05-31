@@ -19,15 +19,3 @@ A modern distributed Phoenix/Elixir successor to [raspcontrol](https://github.co
   - Raspberry Pi, Banana Pi, BeagleBone, OrangePi ...
 
 ![PiControl](https://raw.githubusercontent.com/harmon25/picontrol/master/PiControl.png)
-
-
-### Example of gathering stats from agent nodes
-- connect to a remote node, longname can also be IP address instead of hostname
-- use erlang `:rpc.call/4` to run function on remote BEAM node
-
-```elixir
- 
- :rpc.call(:"agent1@APi1", PiCtrlAgnt.System, :cpu, [])
- :rpc.call(:"agent1@APi1", PiCtrlAgnt.System, :disks, [])
- :rpc.call(:"agent1@APi1", PiCtrlAgnt.System, :ram, [])
-```

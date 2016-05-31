@@ -39,5 +39,5 @@ config :pi_control_manager, PiCntrlMngr.Repo,
   username: "postgres",
   password: "postgres",
   database: "pi_control_dev",
-  hostname: "localhost",
+  hostname: "172.17.0.2",
   pool_size: 10
