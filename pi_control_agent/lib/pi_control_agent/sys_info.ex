@@ -1,9 +1,15 @@
-defmodule PiCtrlAgnt.System do
+defmodule PiCtrlAgnt.SysInfo do
+  @moduledoc """
+  Functions used to gather information or stats about an Agent system
+  """
 
   @node_name Node.self()
   @banana_temp "/sys/devices/platform/sunxi-i2c.0/i2c-0/0-0034/temp1_input"
   @pi_temp "/sys/class/thermal/thermal_zone0/temp"
 
+  @doc """
+  CPU performance statistics
+  """
   def cpu_perf() do
     %{@node_name => %{"avg1" => :cpu_sup.avg1,
                       "avg5" => :cpu_sup.avg5,
@@ -13,15 +19,24 @@ defmodule PiCtrlAgnt.System do
       }
   end
 
+  @doc """
+  Disk information
+  """
   def disks() do
     %{@node_name => :disksup.get_disk_data}
   end
 
+  @doc """
+  RAM information
+  """
   def ram() do
     %{@node_name => :memsup.get_system_memory_data}
   end
 
-  def net() do
+  @doc """
+  Network interaface details
+  """
+  def net_info() do
     {:ok, interface_info} = :inet.getifaddrs()
     interfaces =
     Enum.filter_map(interface_info,
@@ -38,24 +53,9 @@ defmodule PiCtrlAgnt.System do
     %{@node_name => interfaces}
   end
 
-  def kernel() do
-    result = Porcelain.shell("uname -mrs")
-    k = result.out |> String.strip
-    %{@node_name => k}
-  end
-
-  def users() do
-    result = Porcelain.shell("who")
-    user_list = result.out |> String.split("\n", trim: true) |> Enum.map(&(String.split(&1, " ", trim: true)))
-    %{@node_name => user_list}
-  end
-
-  def uptime() do
-     {:ok, file_pid} = File.open "/proc/uptime", [:read]
-      u = IO.binread(file_pid, :all) |> String.split |> List.first |> String.to_float
-     %{@node_name =>   u}
-  end
-
+  @doc """
+  Network interface RX/TX statistics
+  """
   def net_stats() do
     {:ok, interface_info} = :inet.getifaddrs()
      {:ok, file_pid} = File.open "/proc/net/dev", [:read]
@@ -63,6 +63,37 @@ defmodule PiCtrlAgnt.System do
     %{@node_name => net_stats}
   end
 
+  @doc """
+  System kernel
+  """
+  def kernel() do
+    result = Porcelain.shell("uname -mrs")
+    k = result.out |> String.strip
+    %{@node_name => k}
+  end
+
+  @doc """
+  Currently logged in users
+  """
+  def users() do
+    result = Porcelain.shell("who")
+    user_list = result.out |> String.split("\n", trim: true) |> Enum.map(&(String.split(&1, " ", trim: true)))
+    %{@node_name => user_list}
+  end
+
+  @doc """
+  System uptime in seconds
+  """
+  def uptime() do
+     {:ok, file_pid} = File.open "/proc/uptime", [:read]
+      u = IO.binread(file_pid, :all) |> String.split |> List.first |> String.to_float
+     %{@node_name =>   u}
+  end
+
+
+  @doc """
+  CPU Temp in C and F
+  """
   def cpu_temp() do
     {:ok, file_pid} =
     case(cpu_type) do
@@ -75,6 +106,10 @@ defmodule PiCtrlAgnt.System do
    %{@node_name => {c,f}}
   end
 
+
+  @doc """
+  Distro name
+  """
   def distro() do
     {:ok, file_pid} = File.open "/etc/os-release", [:read]
      [distro] = Enum.filter IO.stream(file_pid, :line), &(String.contains?(&1, "PRETTY"))
@@ -82,6 +117,9 @@ defmodule PiCtrlAgnt.System do
     %{@node_name => distro_stripped}
   end
 
+  @doc """
+  CPU name
+  """
   def cpu_name() do
      %{@node_name => cpu_type}
   end

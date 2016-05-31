@@ -28,7 +28,7 @@ defmodule PiCntrlMngr.Manager do
     Currently can only run funtions in the PiCtrlAgnt.System Module
   """
   def gather_stats(function_name) do
-    {resp, bad_nodes } = :rpc.multicall(@agents, PiCtrlAgnt.System, function_name, [])
+    {resp, bad_nodes } = :rpc.multicall(@agents, PiCtrlAgnt.SysInfo, function_name, [])
     resp
   end
 
