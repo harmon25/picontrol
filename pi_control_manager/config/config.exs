@@ -23,6 +23,19 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+
+#guardian
+config :guardian, Guardian,
+  allowed_algos: ["HS256"], # optional
+  verify_module: Guardian.JWT,  # optional
+  issuer: "PiControl",
+  ttl: { 30, :days },
+  verify_issuer: true, # optional
+  secret_key: "HR13091U8EOJNHASD971NAS89NY23JX9",  # should be secret
+  serializer: PiCntrlMngr.GuardianSerializer,
+  permissions: %{ default: [:read],
+                  admin: [:read, :write] }
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

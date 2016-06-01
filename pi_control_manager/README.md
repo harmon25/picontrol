@@ -22,6 +22,18 @@ mix ecto.create
 # launch manager with a short name in interactive shell
 iex --sname manager -S mix phoenix.server
 ```
+# Create a user!
+alias PiCntrlMngr.User
+changeset = User.add_user_changeset(%User{}, %{name: "harmon",
+                                             password: "strongpass",
+                                             admin: true,
+                                             email: "nomraharmon@gmail.com"
+                                           })
+
+changeset.valid?
+
+PiCntrlMngr.Repo.insert(changeset)
+
 
 Within the Elixir shell will have access to the Manager module
 - `connect_agents/0` connects connfigured agents
