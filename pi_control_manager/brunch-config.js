@@ -70,12 +70,17 @@ exports.config = {
   npm: {
     enabled: true,
     static: ["node_modules/semantic-ui-grid/grid.css",
-             "node_modules/semantic-ui-header/header.css" ],
+             "node_modules/semantic-ui-header/header.css",
+             "node_modules/react-s-alert/dist/s-alert-default.css",
+             "node_modules/react-s-alert/dist/s-alert-css-effects/slide.css",
+             "node_modules/react-s-alert/dist/s-alert-css-effects/stackslide.css"
+            ],
     // Whitelist the npm deps to be pulled in as front-end assets.
     // All other deps in package.json will be excluded from the bundle.
     whitelist: ["phoenix", "phoenix_html", "react", "react-dom",
                 "react-router", "redux", "react-redux", "react-router-redux",
-                "redux-thunk", "react-saga", "rebass", "redux-logger", "classnames",
-                "material-ui", "axios", "react-tap-event-plugin"]
+                "react-saga", "rebass", "redux-logger", "classnames",
+                "material-ui", "axios", "react-tap-event-plugin", "react-s-alert",
+                "react-redux-loading-bar"]
   }
 };

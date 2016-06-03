@@ -1,36 +1,51 @@
 import { combineReducers }  from 'redux';
 import { routerReducer } from 'react-router-redux';
 
-import {USER_LOGIN,USER_LOGOUT,LOGIN_OK,LOGIN_FAIL,CLEAR_ALERT} from "../actions"
+import * as actions from "../actions"
 
-const cleared_alert = {type: null, msg: null, timeout: null}
-const intitialState = {
-  loggingIn: false,
-  loggedIn: false,
-  user: null,
-  admin: null,
-  alert: cleared_alert
+const initialAlertState = {
+  loading: {
+    visible: false,
+    value: null
+  },
+  visible_alerts: [],
 }
 
-function sessionReducer(state = intitialState, action) {
+
+const intitialSessionState = {
+  username: null,
+  admin: null,
+}
+
+function alertReducer(state = initialAlertState, action){
+  switch (action.type) {
+    
+    case actions.ADD_ALERT:
+        return {...state, visible_alerts: [action.id, ...state.visible_alerts]}
+    case actions.REMOVE_ALERT:
+        let new_alerts =  state.visible_alerts.map((a)=>{a !== action.id})
+      return {...state, visible_alerts: new_alerts}
+
+    case actions.LOADING:
+      return {...state, loading: {visible: true, value: action.value || null}}
+
+    case actions.STOP_LOADING:
+      return {...state, loading: {visible: false, value: null}}
+    default:
+    return state
+
+  }
+
+}
+
+function sessionReducer(state = intitialSessionState, action) {
  switch (action.type) {
 
-   case USER_LOGIN:
-      return {...state, loggingIn: true}
+   case actions.USER_LOGIN:
+      return {...state, username: action.username, admin: action.admin}
 
-  case USER_LOGOUT:
-     return intitialState;
-
-   case LOGIN_OK:
-      const ok_alert = createAlert("success", action.message, action.timeout);
-      return {...state, user: action.username, loggingIn: false, admin: action.admin, alert: ok_alert}
-
-   case LOGIN_FAIL:
-     const fail_alert = createAlert("error", action.message, action.timeout);
-     return {...state, loggingIn: false, alert: fail_alert}
-
-   case CLEAR_ALERT:
-     return {...state, alert: cleared_alert}
+  case actions.USER_LOGOUT:
+     return intitialSessionState;
 
    default:
      return state
@@ -39,12 +54,9 @@ function sessionReducer(state = intitialState, action) {
 }
 
 
-function createAlert(type, msg, timeout){
-  return {type: type, msg: msg, timeout: timeout}
-}
-
 
 export default combineReducers({
   routing: routerReducer,
-  session: sessionReducer
+  session: sessionReducer,
+  alerts: alertReducer
 });

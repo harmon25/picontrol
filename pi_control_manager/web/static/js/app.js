@@ -11,7 +11,7 @@ import createSagaMiddleware from 'redux-saga'
 
 import configureStore from './store';
 import configRoutes from './routes';
-import {mySagas} from './sagas';
+import rootSaga from './sagas';
 
 injectTapEventPlugin();
 
@@ -19,7 +19,7 @@ const sagaMiddleware = createSagaMiddleware()
 const store = configureStore(hashHistory, sagaMiddleware);
 const history = syncHistoryWithStore(hashHistory, store)
 
-sagaMiddleware.run(mySagas)
+sagaMiddleware.run(rootSaga)
 
 const propTypes = {
   routerHistory: PropTypes.object.isRequired,

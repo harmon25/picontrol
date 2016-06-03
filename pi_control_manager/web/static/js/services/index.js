@@ -9,3 +9,14 @@ export const Api = {
     return true
   }
 }
+
+export function checkToken(){
+  return new Promise(function(resolve, reject){
+    const token = localStorage.getItem('PiControlToken');
+    if(!token){
+      reject("No Token")
+    } else {
+      resolve(token)
+    }
+  })
+}

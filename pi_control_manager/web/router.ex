@@ -9,9 +9,20 @@ defmodule PiCntrlMngr.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :auth do
+    plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
+
+  scope "/login", PiCntrlMngr do
+    pipe_through :auth # Use the default browser stack
+    post "/", SessionController, :user_login
+  end
+
 
   scope "/", PiCntrlMngr do
     pipe_through :browser # Use the default browser stack
