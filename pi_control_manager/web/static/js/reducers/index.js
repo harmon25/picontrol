@@ -3,46 +3,43 @@ import { routerReducer } from 'react-router-redux';
 
 import * as actions from "../actions"
 
-const initialAlertState = {
-  loading: {
-    visible: false,
-    value: null
-  },
-  visible_alerts: [],
-}
-
-
 const intitialSessionState = {
   username: null,
   admin: null,
+  axios: null,
 }
 
-function alertReducer(state = initialAlertState, action){
-  switch (action.type) {
-    
-    case actions.ADD_ALERT:
-        return {...state, visible_alerts: [action.id, ...state.visible_alerts]}
-    case actions.REMOVE_ALERT:
-        let new_alerts =  state.visible_alerts.map((a)=>{a !== action.id})
-      return {...state, visible_alerts: new_alerts}
 
-    case actions.LOADING:
-      return {...state, loading: {visible: true, value: action.value || null}}
+const intitialLoadingState = {
+  visible: false,
+  percent: -1,
+}
 
-    case actions.STOP_LOADING:
-      return {...state, loading: {visible: false, value: null}}
-    default:
-    return state
+function loadingBarReducer(state = intitialLoadingState, action) {
+ switch (action.type) {
 
+  case actions.START_LOADING:
+     return {...state, percent: 0, visible: true}
+
+  case actions.UPDATE_LOADING:
+    return {...state, percent: action.percent_complete}
+
+  case actions.STOP_LOADING:
+     return {...state, percent: -1, visible: false };
+
+   default:
+     return state
   }
 
 }
 
+
 function sessionReducer(state = intitialSessionState, action) {
  switch (action.type) {
 
-   case actions.USER_LOGIN:
-      return {...state, username: action.username, admin: action.admin}
+
+  case actions.START_SESSION:
+     return {...state, username: action.username, admin: action.admin, axios: action.axios}
 
   case actions.USER_LOGOUT:
      return intitialSessionState;
@@ -53,10 +50,8 @@ function sessionReducer(state = intitialSessionState, action) {
 
 }
 
-
-
 export default combineReducers({
   routing: routerReducer,
   session: sessionReducer,
-  alerts: alertReducer
+  loadingBar: loadingBarReducer
 });

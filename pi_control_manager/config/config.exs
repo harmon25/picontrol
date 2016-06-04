@@ -32,9 +32,7 @@ config :guardian, Guardian,
   ttl: { 30, :days },
   verify_issuer: true, # optional
   secret_key: "HR13091U8EOJNHASD971NAS89NY23JX9",  # should be secret
-  serializer: PiCntrlMngr.GuardianSerializer,
-  permissions: %{ default: [:read],
-                  admin: [:read, :write] }
+  serializer: PiCntrlMngr.GuardianSerializer
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

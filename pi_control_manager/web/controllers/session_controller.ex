@@ -16,16 +16,22 @@ defmodule PiCntrlMngr.SessionController do
       end
   end
 
+  def unauthorized(conn, _params) do
+    IO.inspect conn
+    conn
+  end
+
+
   defp send_token(conn, user) do
     case(user.admin) do
       true ->
-         conn = Guardian.Plug.sign_in(conn, user, :token, perms: %{ default: [:read, :write], admin: [:all] })
+         conn = Guardian.Plug.sign_in(conn, user, :token, admin: true)
          token = Map.fetch!(conn.private.plug_session, "guardian_default")
-         json conn, %{user: user.name, admin: user.admin, token: token}
+         json conn, %{token: token}
       false ->
-         conn = Guardian.Plug.sign_in(conn, user, :token, perms: %{default: [:read]})
+         conn = Guardian.Plug.sign_in(conn, user, :token, admin: false)
          token = Map.fetch!(conn.private.plug_session, "guardian_default")
-         json conn, %{user: user.name, admin: user.admin, token: token}
+         json conn, %{token: token}
     end
   end
 

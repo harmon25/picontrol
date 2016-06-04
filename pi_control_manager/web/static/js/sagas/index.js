@@ -1,96 +1,99 @@
 import {  delay } from 'redux-saga'
 import { call, put, take, fork, select, spawn } from 'redux-saga/effects'
-
+import { push } from 'react-router-redux';
 import {alertSelector, sessionSelector, dispatchSelector} from '../reducers/selectors'
 import Alert from 'react-s-alert';
-import {Api, checkToken} from '../services'
+import {Api, checkToken, createAxiosInstance} from '../services'
 import * as actions from '../actions'
 
 
 function* startUp(getState){
   try {
     console.log("checking token")
-    const token = yield call(checkToken)
+    var token = yield call(checkToken)
+    yield put(actions.verifyToken(token))
+
   } catch (e){
     yield put(actions.newAlert({alert: "info", msg: `You need to login!`}));
   }
 }
 
+
+// spawned saga used to
 function* waitForAlert(id, timeout){
   yield delay(timeout)
   yield put(actions.closeAlert(id))
 }
-
-
+// just used to keep a better handle on errors. have side effect in one place
+// and triggered via a dispatched action
 function* alertWatcher(getState){
   while(true){
-    //const dispatch = yield select(dispatchSelector)
     const action = yield take("ALERT")
-    const alert_timeout = 2500
-    const alert_id = Alert[action.alert](action.msg,
-        {timeout: alert_timeout,
+    Alert[action.alert](action.msg,
+        {timeout: action.timeout || 2500,
     })
-    yield put(actions.addAlert(alert_id))
-    yield spawn(waitForAlert, alert_id, alert_timeout)
   }
 }
 
 function* watchUserLogin(getState) {
+
   while (true) {
-    const action = yield take("USER_LOGIN")
-    yield put(actions.startLoading());
+    // user either has to login, or there is a token to verify, either way they
+    // will start a 'session' or app instance one a token has been verified
+    const action = yield take(["USER_LOGIN", "VERIFY_TOKEN"])
+    //yield put(actions.startLoading())
+    var token;
+    // try will catch ajax erros for both login, and fetching user ajax calls
     try {
-      const { data } = yield call(Api.userLogin, action.user, action.password);
-      console.log(data)
-      localStorage.setItem('PiControlToken', data.token);
-      yield put(actions.stopLoading());
-      yield put(actions.newAlert({alert: "success", msg: `Hi ${action.user}!`}));
+      if(action.type == 'USER_LOGIN'){
+        // login user, returns data object with a token
+        const { data } = yield call(Api.userLogin, action.user, action.password);
+        token = data.token
+        // put token in local storage
+        localStorage.setItem('PiControlToken', data.token);
 
+      } else if(action.type == "VERIFY_TOKEN") {
+        // OK we already had a token, now just fetch the user
+        token = action.token
+      }
+      // pass token to create an axios instance with Authorization header
+      const axios = createAxiosInstance(token)
+      // make a request with new auth header
+      const { data } = yield call(Api.verifyToken, axios);
+      // if the token is good should get back info about the user token belongs to
+      console.log(data);
+
+      // now we can start an app 'session' on the client, and move past login screen
+      yield put(actions.startSession(data.user, data.admin, axios));
+      //const action = yield take("START_SESSION")
+      yield put(push("/home"))
+      yield put(actions.stopLoading())
+
+
+      // we are done loading.
+      //yield put(actions.stopLoading())
+
+      /// login flow stops here, waiting for a call to logout
+      // logging out will remove token and reset client state.
+      const session = yield select(sessionSelector);
       yield take("USER_LOGOUT");
-      yield put(actions.newAlert({alert: "success", msg: `Goodbye ${action.user}!`}));
-
+      localStorage.removeItem('PiControlToken');
+      yield put(actions.newAlert({alert: "success", msg: `Goodbye ${session.username}!`}));
+      yield put(push("/login"))
 
     } catch(e){
-        yield put(actions.stopLoading());
+        // will catch rejected promises, including axios requests that respond as not OK
+        yield put(actions.stopLoading())
         if(e.status == 404){
           yield put(actions.newAlert({alert: "error", msg: "Server Error"}));
         } else if(e.status == 401){
           yield put(actions.newAlert({alert: "warning", msg: "Invalid Login"}));
         }
+        console.log(e)
      }
   }
 }
 
-/*
-export function create_sAlert(settings){
-  return {position: settings.position || 'bottom-right',
-          timeout: settings.timeout || 1500,
-          effect: settings.position || 'stackslide',
-         }
-}
-
-export function* genAlertSaga(action){
-  console.log(action.settings)
-  let alert_id = Alert[action.alert](action.msg, {
-   ...action.settings,
-    onShow: function(){
-      console.log('hi!')
-    },
-    onClose: function(){
-      //action.dispatch({type: "CLEAR_ALERT", {id: alert_id}})
-    }
-  })
-
-yield put({type: "NEW_ALERT", {id: alert_id, type: action.alert, msg: action.msg}})
-}
-
-*/
-
-
-/*
-  Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
-  Allows concurrent fetches of user.
-*/
 
 export default function* rootSaga() {
   yield fork(startUp)

@@ -10,6 +10,8 @@
     "react": "^15.1.0",
     "react-addons-shallow-compare": "^15.0.2",
     "react-dom": "^15.0.2",
+    "react-loading-bar": "0.0.2",
+    "react-progress-bar-plus": "^1.1.0",
     "react-redux": "^4.4.5",
     "react-redux-loading-bar": "^2.0.2",
     "react-router": "^2.4.0",

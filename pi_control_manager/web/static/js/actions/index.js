@@ -1,6 +1,8 @@
 export const STARTUP = 'STARTUP';
 
 export const USER_LOGIN = 'USER_LOGIN';
+export const VERIFY_TOKEN = 'VERIFY_TOKEN';
+export const START_SESSION = 'START_SESSION';
 export const USER_LOGOUT = 'USER_LOGOUT';
 
 
@@ -23,9 +25,18 @@ export function userLogin(username,password){
   }
 }
 
+export function startSession(username, admin, axios){
+  return {type: START_SESSION, username: username, admin: admin, axios: axios}
+}
+
 export function userLogout(){
   return {type: USER_LOGOUT}
 }
+
+export function verifyToken(token){
+  return {type: VERIFY_TOKEN, token: token}
+}
+
 
 export function startLoading(){
   return { type: START_LOADING }

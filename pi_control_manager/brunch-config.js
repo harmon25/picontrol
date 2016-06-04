@@ -71,6 +71,7 @@ exports.config = {
     enabled: true,
     static: ["node_modules/semantic-ui-grid/grid.css",
              "node_modules/semantic-ui-header/header.css",
+             "node_modules/react-progress-bar-plus/lib/progress-bar.css",
              "node_modules/react-s-alert/dist/s-alert-default.css",
              "node_modules/react-s-alert/dist/s-alert-css-effects/slide.css",
              "node_modules/react-s-alert/dist/s-alert-css-effects/stackslide.css"
